@@ -44,6 +44,10 @@ function navSetUp() {
     
 };
 
+// call the function
+navSetUp();
+
+
 /**
  * End Global Variables
  * Start Helper Functions
@@ -54,7 +58,7 @@ function navSetUp() {
 
 function sectionInViewPort (element) {
     let sectionPosition = element.getBoundingClientRect();
-    return (sectionPosition.top >= 0);
+    return (sectionPosition.top <= 0 && sectionPosition.bottom >= 0);
 }; //(Mike's Coding Tutorials, 2020)
 
 // I will add active class to the section on the viewport
@@ -63,13 +67,22 @@ function toggleActiveClass() {
         //I will add active class to the section's link if the section is in the viewport
         if (sectionInViewPort(section)) {
             //a conditional is added to check if it already contain an active class
-            if (!section.classList.contains("your-active-class")) {
+            if (!section.classList.contains("page-active-class")) {
                 //Add the active class if it doesn't contain it yet
-                section.classList.add("your-active-class");
-                section.style.cssText = "background-color: lemon";
+                section.classList.add("page-active-class");
+                section.style.cssText = "background-color:red;";
+                let getMenu = document.querySelectorAll('a')
+                for (const menu of getMenu ) {
+                    if(section.getAttribute('data-nav') === menu.innerText){
+                        menu.classList.add('menu__inview')
+                    } else {
+                        menu.classList.remove('menu__inview')
+                    }
+                };
             };
-        } else { // if it's out, the viewport then remove "your-active-class"
-            section.classList.remove("your-active-class");
+        } else { // if it's out, the viewport then remove "page-active-class"
+            section.classList.remove("page-active-class");
+            section.style.cssText = "background-color:linear-gradient(0deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.2) 100%);;";
             //(Mike's Coding Tutorials, 2020)
         };
     };
@@ -81,11 +94,8 @@ function toggleActiveClass() {
  * 
 */
 
-// call the function
-navSetUp();
-//add class 'active' to section when near top of view
  
-// Scroll to anchor ID using scrollTO event
+
 //call the function
 document.addEventListener("scroll", toggleActiveClass);
 // Add class 'active' to section when near top of viewport
@@ -99,29 +109,38 @@ document.addEventListener("scroll", toggleActiveClass);
  * 
 */
 
-const allSections = document.querySelectorAll("sections");
-const navigationItem = document.querySelectorAll("navbar__list");
-window.addEventListener("scroll", () => {
-    let currentView = "";
-    var pageYOffset = "";
+//implementing the actual section
+const allSectionActivation = () => {
     //loop through all the sections
-    entireSections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionLength = section.clientHeight;
-        // i will introduce the pageYOffset.
-        //PageYOffset, commonly known as scrollY, is a read-only window property that returns the amount of vertical scrolling
-        //(i.e., up or down) that has occurred so far.
-        //If the value is set to 0.0, it means that the top edge of the document is presently connected with the upper edge of the browser's subject area.
-        if(pageYOffset >= sectionTop - sectionLength/3){
-            currentView = entireSections.getAttribute("id");
-        };
+    sections.forEach(section => {
+        //create a variable for the offset section
+        const myElementOffset = offset(section);
+        inviewport = () => myElementOffset < 200 && myElementOffset >= -200;
+        
+        removeActive(section);
+        addActive(inviewport(), section);
     });
-    navigationItem.forEach(li =>{
-        li.classList.remove("your-active-class");
-        if(li.classList.contains(currentView)){
-            li.classList.add("your-active-class");
-            section.style.cssText = "background-color: lemon";
-        };
-    });
+};
 
-});
+window.addEventListener("scroll", allSectionActivation);
+
+// Scroll to anchor ID using scrollTO event
+
+const smoothScrolling = () => {
+     const navLinks = document.querySelectorAll(".navbar__menu a");
+     // loop through all the links using forEach loop
+     navLinks.forEach(linkUp => {
+        linkUp.addEventListener("click", () => {
+            //loop through the section and add the smoothScroll effect
+            for(y = 0; y < sections; y++){
+                sections[y].addEventListener("click", scrollToSection(linkUp));
+            }
+
+        });
+     });
+
+
+};
+
+smoothScrolling();
+//Source(//https://www.lambdatest.com/blog/browser-compatible-smooth-scrolling-with-css-js-jquery/)
