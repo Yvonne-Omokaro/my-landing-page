@@ -63,17 +63,17 @@ function sectionInViewPort (element) {
 
 // I will add active class to the section on the viewport
 function toggleActiveClass() {
-    for (section of entireSections) {
+    for (element of entireSections) {
         //I will add active class to the section's link if the section is in the viewport
-        if (sectionInViewPort(section)) {
+        if (sectionInViewPort(element)) {
             //a conditional is added to check if it already contain an active class
-            if (!section.classList.contains("page-active-class")) {
+            if (!element.classList.contains("page-active-class")) {
                 //Add the active class if it doesn't contain it yet
-                section.classList.add("page-active-class");
-                section.style.cssText = "background-color:red;";
+                element.classList.add("page-active-class");
+                element.style.cssText = "background-color:red;";
                 let getMenu = document.querySelectorAll('a')
                 for (const menu of getMenu ) {
-                    if(section.getAttribute('data-nav') === menu.innerText){
+                    if(element.getAttribute('data-nav') === menu.innerText){
                         menu.classList.add('menu__inview')
                     } else {
                         menu.classList.remove('menu__inview')
@@ -81,8 +81,8 @@ function toggleActiveClass() {
                 };
             };
         } else { // if it's out, the viewport then remove "page-active-class"
-            section.classList.remove("page-active-class");
-            section.style.cssText = "background-color:linear-gradient(0deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.2) 100%);;";
+            element.classList.remove("page-active-class");
+            element.style.cssText = "background-color:linear-gradient(0deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.2) 100%);;";
             //(Mike's Coding Tutorials, 2020)
         };
     };
@@ -94,14 +94,10 @@ function toggleActiveClass() {
  * 
 */
 
- 
-
 //call the function
 document.addEventListener("scroll", toggleActiveClass);
 // Add class 'active' to section when near top of viewport
 //(Mike's Coding Tutorials, 2020)
-
-
 
 /**
  * End Main Functions
@@ -112,28 +108,28 @@ document.addEventListener("scroll", toggleActiveClass);
 //implementing the actual section
 const allSectionActivation = () => {
     //loop through all the sections
-    sections.forEach(section => {
+    entireSections.forEach(element => {
         //create a variable for the offset section
-        const myElementOffset = offset(section);
+        const myElementOffset = sectionInViewPort(element);
         inviewport = () => myElementOffset < 200 && myElementOffset >= -200;
-        
-        removeActive(section);
-        addActive(inviewport(), section);
+
+        toggleActiveClass(element);
+        toggleActiveClass(inviewport(), element);
     });
 };
 
 window.addEventListener("scroll", allSectionActivation);
 
-// Scroll to anchor ID using scrollTO event
+// create scroll section
 
-const smoothScrolling = () => {
+const pageScroll = () => {
      const navLinks = document.querySelectorAll(".navbar__menu a");
      // loop through all the links using forEach loop
      navLinks.forEach(linkUp => {
         linkUp.addEventListener("click", () => {
-            //loop through the section and add the smoothScroll effect
-            for(y = 0; y < sections; y++){
-                sections[y].addEventListener("click", scrollToSection(linkUp));
+            //loop through the section and add the Scroll effect
+            for(y = 0; y < entireSections; y++){
+                entireSections[y].addEventListener("click", scrollToSection(linkUp));
             }
 
         });
@@ -142,5 +138,27 @@ const smoothScrolling = () => {
 
 };
 
-smoothScrolling();
+pageScroll();
 //Source(//https://www.lambdatest.com/blog/browser-compatible-smooth-scrolling-with-css-js-jquery/)
+
+// Scroll to anchor ID using scrollTO event
+const scrollingPage = document.querySelectorAll(".navbar__menu a");
+  scrollingPage.forEach(data => data.addEventListener("click", smoothscroll));
+  function smoothscroll(event){
+    event.preventDefault();
+    const targetId = event.currentTarget.getAttribute("href");
+    window.scrollTo({
+        //Window.scrollTo() scrolls to a particular set of coordinates in the document.
+        // Definition of window.scrollTo by MDN web docs)
+      top: targetId=== "#" ? 0 : document.querySelector(targetId).offsetTop,
+      // top specifies the number of pixels along the Y axis to scroll the window or element.
+      //Definition top by MDN web docs)
+      behavior: "smooth"
+      //scroll behavior specifies whether the scrolling should animate smoothly (smooth), or happen instantly in a single jump (auto, the default value).
+      // Definition of scroll behavior by MDN web docs)
+    });
+  }
+
+  //Source(//https://www.lambdatest.com/blog/browser-compatible-smooth-scrolling-with-css-js-jquery/)
+
+
